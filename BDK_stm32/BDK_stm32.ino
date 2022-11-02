@@ -31,7 +31,7 @@ void loop() {
 	digitalWrite(PA3, LOW);
 	i = i + 1000;
 	j = j + 1000;
-	delay(100);
+	delay(50);
 	if (i > 65535) i = 65535;
 	if (j > 65535) j = 65535;
 }

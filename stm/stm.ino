@@ -3,10 +3,17 @@ String DataSTM = "";
 long last=0;
 
 String hang="";
+String vatcan="";
 void read_ESP8266(void);
 void send_Data(void);
 void kiemtrahang(void);
-#define hongngoai PB15
+void kiemtravatcan(void);
+#define hongngoai PA15
+
+#define trig PB8
+#define echo PB9
+int khoangcach;
+
 const int pwm1=PA1;
 const int pwm2=PA2;
 int i=15000;
@@ -15,7 +22,9 @@ void setup()
 { 
   pinMode(pwm2,PWM);
   pinMode(pwm1,PWM);
-  pinMode(hongngoai, INPUT);
+  pinMode(hongngoai, INPUT_PULLUP);
+  pinMode(trig, OUTPUT);
+  pinMode(echo, INPUT);
   Serial1.begin(9600);
   
 }
@@ -40,8 +49,9 @@ else {
     pwmWrite(pwm2,0);
   } 
 */
-  read_ESP8266();
+  //read_ESP8266();
   kiemtrahang();
+  kiemtravatcan();
   if (millis()-last>=1500){
     send_Data();
     last=millis();
@@ -55,12 +65,30 @@ void kiemtrahang(void){
     hang="0";
    }  
   }
-void send_Data(void){
-  Json(String(hang));
+void kiemtravatcan(void){
+  unsigned long duration;
+  digitalWrite(trig,0);
+  delayMicroseconds(2);
+  digitalWrite(trig,1);
+  delayMicroseconds(5);
+  digitalWrite(trig,0);
+  duration = pulseIn(echo,HIGH);
+  khoangcach = int((duration/2)/29.412);
+  if (khoangcach <= 20){
+    vatcan= "1";
+    }
+  else {
+    vatcan="0";
+    }
+  delay(200);
   }
-void Json(String thamso1){
+void send_Data(void){
+  Json(String(hang), String(vatcan));
+  }
+void Json(String thamso1, String thamso2){
   DataSend="";
-  DataSend= String(thamso1);
+  DataSend= "{\"hang\":\"" + String(thamso1) + "\"," +
+             "\"vatcan\":\"" + String (thamso2)+ "\"}";
   Serial1.println(DataSend);
   Serial1.flush();
   }  

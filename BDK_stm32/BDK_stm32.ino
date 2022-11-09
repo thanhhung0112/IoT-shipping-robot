@@ -4,7 +4,7 @@ int i=0;
 int j=0;
 int pulse_val1;
 int pulse_val2;
-const float mcu; // the value which the mcu sensor returns
+const float mcu; // the value which the mpu sensor returns
 const int theta; // get the specified value in the specified stage such as 0 degree in stage 1, 90 degree in stage 2, etc
 
 void compute_ratio(int theta, float mcu) {

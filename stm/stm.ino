@@ -41,12 +41,12 @@ void loop()
 		pwmWrite(pwm2, i-j);
 		digitalWrite(PA0, LOW);
 		digitalWrite(PA3, LOW);
+		delay(1000);
 	}
 	else {
 		pwmWrite(pwm1,0);
 		pwmWrite(pwm2,0);
 	} 
-  delay(10);
 	/* i = i + 10000; */
 	/* if (i>65535) i=65535; */
 	/* j = j - 1000; */

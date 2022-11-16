@@ -1,0 +1,23 @@
+giả sử phương trình ánh xạ xung pwm thành tốc độ là y = 0.001x (x là xung pwm, y là tốc độ, 0.001 là giả sử tương quan giữa xung pwm và tốc độ là tuyến tính)
+
+ta có y1 là tốc độ encoder động cơ 1, y2 là tốc độ encoder động cơ 2
+ta sử dụng y1 làm set point, y2 là tín hiệu phản hồi, mục tiêu điều khiển tốc độ y2 bằng y1
+
+tạo dựng hàm loss = (y2 - y1)^2
+tìm cách update xung cấp cho y2 để loss bằng 0 (tức là tốc độ 2 động cơ bằng nhau)
+
+tính toán gradient:
+	dloss/dx2 = 2(y2 - y1)*0.001
+
+update xung x2 cung cấp cho y2 để đạt được loss bằng 0
+	x2 = x2 - lr * dloss/dx2 
+tuy nhiên dloss/dx2 có thể thấy là quá nhỏ, dẫn tới update rất chậm, vì thế lr phải lớn để bù lại (dùng thực nghiệm để xác định lr)
+nếu lr đủ lớn thì chỉ cần tầm chưa tới 10 vòng lặp đã có thể điều chỉnh lại sai lệch nhỏ trong quá trình điều khiển
+
+lấy ví dụ y1 đang có tốc độ là 50 vòng/phút, y2 chỉ có 45 vòng/phút
+ta sẽ tính được lr * dloss/dx2 = -1000 nếu lr = 100000
+update x2 = 45000 - - 600 = 46000 (tương ứng 1 vòng lặp)
+
+tương tự khi x2 được update, y2 giả sử bỏ qua độ trễ do truyền động thì sẽ tăng lên 46 vòng/phút
+tiếp tục tính như trên, ta sẽ dần update giá trị y2 bằng y1 ở mức xấp xỉ nhưng không tốn quá nhiều vòng lặp, và càng gần giá trị set point thì update chậm dần
+tuy nhiên việc này cần phải chạy thực nghiệm để xác định các tham số như lr cho hợp lí, và tính toán độ delay để có thể duy trì chạy thẳng
